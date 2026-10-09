@@ -12,12 +12,12 @@ CLI -> OrionBrain -> parser -> intent router -> tool registry -> local OS/tool
                        +-> model fallback +-> formatted response
 ```
 
-The first incremental architecture slice now adds a provider-neutral `models`
-package and in-process `memory` package:
+v0.2 adds a provider-neutral `models` package, persistent SQLite memory, and a
+bounded model-driven tool loop:
 
 ```text
-User input -> Brain -> working-memory retrieval -> known intent/tool OR Model
-           -> working-memory write -> response
+User input -> Brain -> SQLite context retrieval -> known intent/tool OR Model
+           -> registered tool observation -> final model response -> memory write
 ```
 
 ## Existing capabilities
@@ -41,9 +41,11 @@ User input -> Brain -> working-memory retrieval -> known intent/tool OR Model
 | Tools | `backend/tools/` | Built-ins and legacy registry |
 | Voice/config | `backend/voice/`, `backend/config/` | Empty placeholders |
 
-`backend/requirements.txt` is empty: the initial project uses only the Python
-standard library. There are no environment variables, package lockfiles, model
-providers, databases, web-search clients, or external model integrations.
+`backend/requirements.txt` is empty: v0.2 uses only the Python standard
+library. The OpenAI-compatible model adapter uses `ORION_MODEL_PROVIDER=openai`,
+`OPENAI_API_KEY`, and `OPENAI_MODEL`; optional `OPENAI_BASE_URL`,
+`ORION_MEMORY_DB`, and `ORION_SYSTEM_INSTRUCTION` control endpoint, memory
+location, and personality. There are no package lockfiles or committed secrets.
 
 ## Current data flow and tools
 
@@ -109,7 +111,9 @@ first migration.
 
 ## Not implemented
 
-Persistent memory, real LLM providers, permissions, audit logging, RAG,
-research, multimodal perception, model selection policy, autonomous loops,
-knowledge graphs, and learning are intentionally **not implemented**. They are
-future phases, not hidden placeholders.
+Implemented in v0.2: an OpenAI-compatible provider adapter with safe network,
+timeout, rate-limit, and invalid-response handling; persistent SQLite memory;
+read-only file/project/Git inspection; registered model tool schemas; and a
+three-step bounded tool-observation loop. Research, PDFs, voice, audit logging,
+interactive approval handoff, filesystem writes, terminal commands, RAG,
+knowledge graphs, and learning are intentionally **not implemented** yet.

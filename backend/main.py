@@ -1,7 +1,15 @@
 from brain.core import OrionBrain
+from config.settings import Settings
+from memory import SQLiteMemoryStore
+from models.router import ModelRouter
 
 
-brain = OrionBrain()
+settings = Settings.from_environment()
+brain = OrionBrain(
+    memory=SQLiteMemoryStore(settings.database_path),
+    model_router=ModelRouter.from_settings(settings),
+    system_instruction=settings.system_instruction,
+)
 
 
 def listen_for_wake_word():

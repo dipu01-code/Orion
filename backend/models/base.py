@@ -14,6 +14,8 @@ class ModelRequest:
     prompt: str
     context: tuple[str, ...] = ()
     metadata: Mapping[str, Any] = field(default_factory=dict)
+    system_instruction: str = "You are ORION, a helpful, precise desktop assistant."
+    tools: tuple[Mapping[str, Any], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -23,6 +25,16 @@ class ModelResponse:
     text: str
     model_id: str
     confidence: float | None = None
+    tool_calls: tuple["ToolCall", ...] = ()
+
+
+@dataclass(frozen=True)
+class ToolCall:
+    """A model-requested action, kept separate from provider wire formats."""
+
+    name: str
+    arguments: Mapping[str, Any]
+    id: str = ""
 
 
 class Model(ABC):

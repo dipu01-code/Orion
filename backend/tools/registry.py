@@ -6,6 +6,7 @@ from tools.applications import (
     open_folder_in_application
 )
 from tools.filesystem import create_folder
+from tools.inspection import git_status, inspect_project, read_file
 
 
 TOOLS = {
@@ -55,7 +56,22 @@ TOOLS = {
         "parameters": {"expression": "str"},
         "safety": "safe",
         "return_type": "tool_result",
-    }
+    },
+    "inspect_project": {
+        "function": inspect_project,
+        "description": "List files in a project without modifying it.",
+        "parameters": {"directory": "str"}, "safety": "safe", "return_type": "tool_result",
+    },
+    "read_file": {
+        "function": read_file,
+        "description": "Read a UTF-8 text file without modifying it.",
+        "parameters": {"path": "str"}, "safety": "safe", "return_type": "tool_result",
+    },
+    "git_status": {
+        "function": git_status,
+        "description": "Inspect read-only Git status in a directory.",
+        "parameters": {"directory": "str"}, "safety": "safe", "return_type": "tool_result",
+    },
 }
 
 
@@ -83,4 +99,23 @@ def describe_tool(tool_name):
         for key, value in tool.items()
         if key != "function"
     }
+
+
+def model_tool_definitions():
+    """Return provider-neutral function schemas without executable callables."""
+    return tuple({
+        "type": "function",
+        "function": {
+            "name": name,
+            "description": tool["description"],
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    parameter: {"type": "string"}
+                    for parameter in tool["parameters"]
+                },
+                "required": list(tool["parameters"]),
+            },
+        },
+    } for name, tool in TOOLS.items())
  

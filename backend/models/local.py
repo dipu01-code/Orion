@@ -11,9 +11,9 @@ class LocalFallbackModel(Model):
     async def generate(self, request: ModelRequest) -> ModelResponse:
         return ModelResponse(
             text=(
-                "I do not have a configured language model for that request yet. "
-                "I can currently help with system information, arithmetic, "
-                "folders, and launching applications."
+                "ORION's conversational model is not configured. Set "
+                "ORION_MODEL_PROVIDER=openai, OPENAI_API_KEY, and OPENAI_MODEL "
+                "to enable conversations. Built-in commands remain available."
             ),
             model_id=self.model_id,
             confidence=0.25,

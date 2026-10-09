@@ -59,7 +59,7 @@ def parse_command(command):
         }
 
     calculator = CALCULATOR_PATTERN.match(command)
-    if calculator:
+    if calculator and _looks_like_math_expression(calculator.group("expression")):
         return {
             "intent": "calculate",
             "expression": _clean_expression(calculator.group("expression")),
@@ -99,3 +99,8 @@ def _clean_expression(value):
         .replace("X", "*")
         .replace("÷", "/")
     )
+
+
+def _looks_like_math_expression(value):
+    """Avoid routing ordinary questions beginning with 'what is' to calculator."""
+    return bool(re.fullmatch(r"[\d\s+\-*/%().xX×÷]+", value))

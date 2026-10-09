@@ -14,6 +14,12 @@ def route_intent(intent):
             intent["folder_name"],
         )
 
+    if intent_name == "create_folder":
+        return _format_tool_result(run_tool("create_folder", intent["folder_name"]))
+
+    if intent_name == "calculate":
+        return _format_tool_result(run_tool("calculate", intent["expression"]))
+
     if intent_name == "open_new_window":
         result = run_tool("open_new_window", intent["app_name"])
         return _format_tool_result(result)
